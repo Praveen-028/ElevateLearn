@@ -1,0 +1,124 @@
+/* Overall container for the results page */
+.results-page-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  background-color: #f8f9fa; /* Light background for contrast */
+  height: 100vh; /* Full height */
+  overflow-y: auto; /* Scroll if content overflows */
+}
+
+/* Header styling */
+.results-page-header {
+  width: 100%;
+  background-color: #007bff; /* Blue background for header */
+  color: white; /* White text */
+  padding: 15px;
+  text-align: center;
+}
+
+/* Score section styling */
+.score-section {
+  margin: 20px 0;
+}
+
+.score-display {
+  font-size: 24px;
+  font-weight: bold;
+  color: #343a40; /* Dark text color */
+}
+
+/* Scrollable content area for results */
+.results-scrollable-content {
+  width: 100%;
+  max-height: calc(100vh - 120px); /* Leave space for header and score */
+  overflow-y: auto; /* Allow scrolling for long lists */
+}
+
+/* List styling */
+.results-list {
+  list-style-type: none; /* Remove default list styling */
+  padding: 0; /* Remove padding */
+}
+
+/* Individual question result styling */
+.question-result {
+  background-color: #ffffff; /* White background for each question */
+  border: 1px solid #dee2e6; /* Light border */
+  border-radius: 5px;
+  padding: 15px;
+  margin: 10px 0;
+  transition: background-color 0.3s; /* Smooth background change */
+}
+
+/* Correct answer styling */
+.correct {
+  color: #28a745; /* Green color for correct answers */
+}
+
+/* Incorrect answer styling */
+.incorrect {
+  color: #dc3545; /* Red color for incorrect answers */
+}
+
+/* Unanswered styling */
+.unanswered {
+  color: #6c757d; /* Gray color for unanswered */
+}
+
+/* Error and success message styling */
+.error-message {
+  color: red;
+  margin-top: 10px;
+}
+
+.success-message {
+  color: green;
+  margin-top: 10px;
+}
+
+/* Button styling */
+.redirect-button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #4CAF50; /* Green */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.redirect-button:hover {
+  background-color: #45a049; /* Darker green */
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .score-display {
+    font-size: 20px;
+  }
+
+  .question-result {
+    padding: 10px;
+  }
+
+  .redirect-button {
+    padding: 8px 16px; /* Adjust button padding */
+  }
+}
+
+@media (max-width: 480px) {
+  .score-display {
+    font-size: 18px;
+  }
+
+  .question-result {
+    padding: 8px;
+  }
+
+  .redirect-button {
+    padding: 6px 12px; /* Adjust button padding */
+  }
+}

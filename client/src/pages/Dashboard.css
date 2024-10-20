@@ -1,0 +1,174 @@
+/* Set body and html height to 100% */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden; /* Prevent double scrolling */
+  font-family: 'Arial', sans-serif; /* Use a clean, modern font */
+}
+
+/* Dashboard container with a background image */
+.dashboard-container {
+  max-width: 1500px;
+  margin: 0 auto;
+  padding: 20px;
+  background-image: url('images/5.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  border-radius: 15px; /* Slightly more rounded corners */
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: white;
+}
+
+/* Navbar styles */
+.navbar {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 30px;
+  background-color: rgba(0, 0, 0, 0.8); /* Darker background for contrast */
+  border-radius: 8px;
+  margin-bottom: 30px;
+}
+
+/* Header styles */
+.site-title {
+  font-size: 36px; /* Larger font for title */
+  font-weight: bold;
+  color: #FFD700;
+  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.9);
+}
+
+.welcome-message {
+  font-size: 22px; /* Slightly larger welcome message */
+  color: #FFFFFF;
+  text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.6);
+}
+
+/* Button styles */
+.profile-btn, .quiz-btn, .logout-btn {
+  display: inline-block;
+  padding: 14px 28px; /* Slightly larger padding */
+  font-size: 18px; /* Larger font size */
+  background-color: #007BFF; /* Button background color */
+  color: #FFFFFF;
+  border: none;
+  border-radius: 8px; /* Rounded corners for buttons */
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+  margin: 5px 10px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+}
+
+.profile-btn:hover, .quiz-btn:hover, .logout-btn:hover {
+  background-color: #0056b3; /* Darker shade on hover */
+  transform: translateY(-2px);
+}
+
+/* Align buttons container */
+.button-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+/* Style for each section */
+.stats-section, .activities-section, .tasks-section, .notifications-section, .quick-links-section {
+  width: 80%;
+  max-width: 600px;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: rgba(255, 255, 255, 0.95); /* Slightly more opaque background */
+  border-radius: 10px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Header styles for sections */
+.stats-section h2, .activities-section h2, .tasks-section h2, .notifications-section h2, .quick-links-section h2 {
+  font-size: 26px; /* Increased header size */
+  color: #333;
+  margin-bottom: 10px;
+  border-bottom: 3px solid #007BFF; /* Thicker border for header */
+  padding-bottom: 5px;
+}
+
+/* General text color for sections */
+.stats-section p, .activities-section p, .tasks-section p, .notifications-section p, .quick-links-section p {
+  color: #080808;
+  margin: 5px 0;
+}
+.stats-section p{
+  margin-right: 20%;
+}
+
+/* Ensure sections are scrollable */
+.dashboard-container {
+  height: 100vh;
+  overflow-y: auto;
+}
+
+/* Mobile responsive styles */
+@media (max-width: 768px) {
+  .button-container {
+    flex-direction: column;
+  }
+
+  .profile-btn, .quiz-btn, .logout-btn {
+    width: 100%;
+    margin: 10px 0;
+  }
+
+  .stats-section, .activities-section, .tasks-section, .notifications-section, .quick-links-section {
+    width: 90%;
+    margin-top: 15px;
+  }
+
+  .navbar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+/* Stats Section and Button */
+.stats-section {
+  display: flex;
+  justify-content: space-between; /* Align items to space between */
+  align-items: center; /* Center align the items vertically */
+  padding: 10px; /* Add some padding */
+  position: relative; /* Make it relative for absolute positioning of the button */
+}
+
+.quiz-comparison-button {
+  width: 70px; /* Set a slightly larger width */
+  height: 70px; /* Set a slightly larger height */
+  background-color: #007BFF; /* Button background color */
+  color: white; /* Arrow color */
+  border: none; /* Remove border */
+  cursor: pointer; /* Pointer cursor on hover */
+  border-radius: 50%; /* Make the button circular */
+  position: absolute; /* Position it absolutely */
+  right: 15px; /* Align to the right with some margin */
+  top: 50%; /* Center vertically */
+  transform: translateY(-50%); /* Adjust for vertical centering */
+  display: flex; /* Use flexbox for centering the icon */
+  justify-content: center; /* Center the icon horizontally */
+  align-items: center; /* Center the icon vertically */
+  transition: background-color 0.3s; /* Smooth background color transition */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Add shadow for depth */
+}
+
+.quiz-comparison-button:hover {
+  background-color: #0056b3; /* Darker shade on hover */
+}
+
+.arrow-icon {
+  font-size: 28px; /* Increase size of the arrow */
+}

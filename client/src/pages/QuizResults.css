@@ -1,0 +1,161 @@
+/* General container settings */
+.quiz-results-container {
+    max-width: 1300px;
+    margin: 20px auto;
+    padding: 30px;
+    border-radius: 12px;
+    background-color: #ffffff;
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.12);
+    overflow-y: auto; /* Keep the scrolling behavior */
+    height: 95vh;
+    font-family: 'Arial', sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    scrollbar-width: none; /* For Firefox, hide scrollbar */
+}
+
+/* Hide scrollbar for WebKit-based browsers (Chrome, Safari) */
+.quiz-results-container::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+}
+
+/* Title */
+.results-title {
+    font-size: 28px;
+    font-weight: bold;
+    color: #2c3e50;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+/* Adjust card container to allow more cards */
+.card-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+}
+
+/* Individual quiz card */
+.quiz-card {
+    padding: 15px;
+    border: 1px solid #e5e5e5;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+    cursor: pointer;
+    transition: transform 0.3s, box-shadow 0.3s, background-color 0.3s;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    position: relative;
+    width: 100%;
+    max-width: 220px;
+    min-height: 160px;
+    text-align: left;
+}
+
+/* Arrow effect with a blue circle */
+.quiz-card::after {
+    content: '→'; /* Right arrow symbol */
+    position: absolute;
+    right: -30px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 22px;
+    color: #fff;
+    background-color: #007bff; /* Blue background for circle */
+    width: 30px; /* Width of the circle */
+    height: 30px; /* Height of the circle */
+    border-radius: 50%; /* Create a circular shape */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease, right 0.3s ease;
+}
+
+/* Hover effect for the arrow and circle */
+.quiz-card:hover::after {
+    opacity: 1;
+    right: 8px; /* Arrow moves closer on hover */
+}
+
+/* Hover effect for the quiz card */
+.quiz-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+    background-color: #f1f1f1;
+}
+
+/* Card title */
+.quiz-card h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #34495e;
+    margin-bottom: 8px;
+}
+
+/* Card paragraph */
+.quiz-card p {
+    font-size: 14px;
+    color: #7f8c8d;
+    margin: 5px 0;
+}
+
+/* Correct and incorrect answers */
+.correct {
+    color: #28a745;
+}
+
+.incorrect {
+    color: #dc3545;
+}
+
+/* Button container */
+.button-container {
+    margin-top: 20px;
+    display: flex;
+    justify-content: flex-start;
+    gap: 10px;
+}
+
+/* Button styling */
+.restart-btn {
+    padding: 10px 15px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.restart-btn:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .quiz-results-container {
+        padding: 15px;
+    }
+
+    .quiz-card {
+        max-width: 100%;
+    }
+
+    .card-container {
+        gap: 5px;
+    }
+
+    .results-title {
+        font-size: 24px;
+    }
+}
+
+h2 {
+    color: black;
+}
