@@ -19,36 +19,37 @@ const Instructions = () => {
   };
 
   return (
-    <div className="instructions-container">
-      <header className="instructions-header">
-        <h1>Elevate Learn</h1>
-      </header>
-      <div className="instructions-content">
-        <h2>Instructions for {subject}</h2>
-        <p>Please read the instructions carefully before starting the test:</p>
-        <ul className="instruction-list">
-          <li>You will have one question on each page.</li>
-          <li>Click "Next" to move to the next question.</li>
-          <li>Select the correct answer from the four available options.</li>
-          <li>Avoid any form of malpractice.</li>
-        </ul>
-        <div className="agree-section">
-          <input
-            type="checkbox"
-            id="agreeTerms"
-            checked={isAgreed}
-            onChange={(e) => setIsAgreed(e.target.checked)}
-          />
-          <label htmlFor="agreeTerms"> I agree to the terms and conditions.</label>
-        </div>
-        <button className="take-test-button" onClick={handleTakeTest} disabled={!isAgreed}>
-          Take Test
-        </button>
-      </div>
-      <footer className="instructions-footer">
-        <p>&copy; 2024 Elevate Learn. All Rights Reserved.</p>
-      </footer>
+<div className="instructions-page-container">
+  <header className="instructions-page-header">
+    <h2>Elevate Learn</h2>
+  </header>
+  <div className="instructions-page-content">
+    <h2>Instructions for {subject}</h2>
+    <p>Please read the instructions carefully before starting the test:</p>
+    <ul className="instructions-page-list">
+      <li>You will have one question on each page.</li>
+      <li>Click "Next" to move to the next question.</li>
+      <li>Select the correct answer from the four available options.</li>
+      <li>Avoid any form of malpractice.</li>
+    </ul>
+    <div className="instructions-page-agree-section">
+      <input
+        type="checkbox"
+        id="agreeTerms"
+        checked={isAgreed}
+        onChange={(e) => setIsAgreed(e.target.checked)}
+      />
+      <label htmlFor="agreeTerms"> I agree to the terms and conditions.</label>
     </div>
+    <button className="instructions-page-take-test-button" onClick={handleTakeTest} disabled={!isAgreed}>
+      Take Test
+    </button>
+  </div>
+  <footer className="instructions-page-footer">
+    <p>&copy; 2024 Elevate Learn. All Rights Reserved.</p>
+  </footer>
+</div>
+
   );
 };
 

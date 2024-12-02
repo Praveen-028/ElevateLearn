@@ -36,36 +36,37 @@ const QuizPage = () => {
   };
 
   return (
-    <div className="quiz-container">
-      <h1>Select a Subject for the Quiz</h1>
-      <p>Please choose a subject from the dropdown below to begin your quiz.</p>
-
-      <div className="dropdown-container">
-        <select 
-          onChange={(e) => setSelectedSubject(e.target.value)} 
-          value={selectedSubject} 
-          className="subject-dropdown"
-        >
-          <option value="">-- Select a Subject --</option>
-          {subjects.length > 0 ? (
-            subjects.map((subject, index) => (
-              <option key={index} value={subject}> {/* Use index as key since it's unique in this context */}
-                {subject}
-              </option>
-            ))
-          ) : (
-            <option value="" disabled>Loading subjects...</option>
-          )}
-        </select>
-      </div>
-      <button onClick={handleStartQuiz} className="start-quiz-button">
-        Start Quiz
-      </button>
-
-      <footer className="footer">
-        <p>&copy; 2024 Elevate Learn. All Rights Reserved.</p>
-      </footer>
+    <div className="quiz-page-container">
+  <div className="quiz-page-content">
+    <h2>Select a Subject for the Quiz</h2>
+    <p>Please choose a subject from the dropdown below to begin your quiz.</p>
+    <div className="quiz-page-dropdown-container">
+      <select 
+        onChange={(e) => setSelectedSubject(e.target.value)} 
+        value={selectedSubject} 
+        className="quiz-page-subject-dropdown"
+      >
+        <option value="">-- Select a Subject --</option>
+        {subjects.length > 0 ? (
+          subjects.map((subject, index) => (
+            <option key={index} value={subject}>
+              {subject}
+            </option>
+          ))
+        ) : (
+          <option value="" disabled>Loading subjects...</option>
+        )}
+      </select>
     </div>
+    <button onClick={handleStartQuiz} className="quiz-page-start-button">
+      Start Quiz
+    </button>
+    <footer className="quiz-page-footer">
+      <p>&copy; 2024 Elevate Learn. All Rights Reserved.</p>
+    </footer>
+  </div>
+</div>
+
   );
 };
 

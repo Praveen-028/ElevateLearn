@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
-const User = require('../Models/UserModel'); // Assuming your User schema is stored in models/User.js
-const QuizResult = require('../Models/QuizResult'); // Import the new QuizResult model
+const User = require('../Models/UserModel'); // Ensure the path is correct
+const QuizResult = require('../Models/QuizResult'); // Ensure the path is correct
 
 module.exports.storeQuizResults = async (req, res) => {
   const token = req.cookies.token; // Extract token from cookies
@@ -8,56 +8,48 @@ module.exports.storeQuizResults = async (req, res) => {
     return res.status(401).json({ status: false, message: "No token provided" });
   }
 
-  jwt.verify(token, process.env.TOKEN_KEY, async (err, data) => {
+  jwt.verify(token, process.env.TOKEN_KEY, async (err, decoded) => {
     if (err) {
-      return res.status(403).json({ status: false, message: "Invalid token" });
+      return res.status(403).json({ status: false, message: "Invalid or expired token" });
     }
 
-    const userId = data.id;
-    const { subject, score, totalQuestions, questions } = req.body; // Expecting quiz attempt ID in the request body
+    const userId = decoded.id; // Extract user ID from decoded token
+    const { subject, score, totalQuestions, questions } = req.body;
+
+    // Identify weaknesses based on incorrect answers
+    const weaknesses = questions
+      .filter(question => question.correctAnswer !== question.userAnswer)
+      .map(question => question.topics);
+
+    // Prepare quiz result data
+    const quizResultData = {
+      userId,
+      subject,
+      score,
+      totalQuestions,
+      weaknesses, // Add weaknesses to the data
+      questions: questions.map((question) => ({
+        question: question.question,
+        topics: question.topics,
+        correctAnswer: question.correctAnswer,
+        userAnswer: question.userAnswer,
+        isCorrect: question.correctAnswer === question.userAnswer,
+      })),
+    };
 
     try {
-      // Find the user by ID
-      const user = await User.findById(userId);
-      if (!user) {
-        return res.status(404).json({ status: false, message: "User not found" });
-      }
+      // Save the quiz result in the database
+      const quizResult = new QuizResult(quizResultData);
+      await quizResult.save();
 
-      // Check for duplicate quiz results using quizAttemptId
-      
-
-      // Create a new quiz result object
-      const newQuizResult = new QuizResult({
-        userId: user._id, // Reference to the user
-        subject,
-        score,
-        totalQuestions,
-       // Add unique quiz attempt ID
-        questions: questions.map((q) => ({
-          question: q.question,
-          correctAnswer: q.correctAnswer,
-          userAnswer: q.userAnswer,
-          isCorrect: q.isCorrect,
-        })),
-        createdAt: Date.now(), // Timestamp when quiz result was created
-      });
-
-      // Save the quiz result
-      await newQuizResult.save();
-
-      // Send response
-      res.status(200).json({
-        status: true,
-        message: "Quiz results stored successfully",
-        quizResult: newQuizResult,
-      });
-
+      return res.status(201).json({ status: true, message: 'Quiz results submitted successfully.' });
     } catch (error) {
-      console.error("Error storing quiz results:", error);
-      res.status(500).json({ status: false, message: "Error storing quiz results" });
+      console.error('Error saving quiz result:', error);
+      return res.status(500).json({ status: false, message: 'Failed to submit quiz results.' });
     }
   });
 };
+
 
 module.exports.compareQuizResultsBySubject = async (userId) => {
   try {
@@ -296,6 +288,118 @@ module.exports.getQuizComparison = async (req, res) => {
     } catch (error) {
       console.error("Error fetching quiz comparison:", error);
       res.status(500).json({ status: false, message: "Error fetching quiz comparison" });
+    }
+  });
+};
+
+const Question = require('../Models/QuestionModel'); // Import the Question model
+
+// Function to add a new question
+module.exports.addQuestion = async (req, res) => {
+  // Extract question data from the request body
+  const { subject, grade, topics, question, choices, correctAnswer } = req.body; // Include 'topics'
+
+  // Basic validation
+  if (!subject || !grade || !topics || !question || !choices || !correctAnswer) { // Validate 'topics'
+    return res.status(400).json({ status: false, message: "All fields are required." });
+  }
+
+  try {
+    // Create a new question instance
+    const newQuestion = new Question({
+      subject,
+      grade,
+      topics, // Save 'topics'
+      question,
+      choices,
+      correctAnswer,
+    });
+
+    // Save the question to the database
+    await newQuestion.save();
+
+    // Send a success response
+    res.status(201).json({
+      status: true,
+      message: "Question added successfully",
+      question: newQuestion,
+    });
+  } catch (error) {
+    console.error("Error adding question:", error);
+    res.status(500).json({ status: false, message: "Error adding question" });
+  }
+};
+
+module.exports.uploadQuestions = async (req, res) => {
+  // Extract questions from the request body
+  const { questions } = req.body;
+
+  console.log("Received questions:", questions); // Debugging line
+
+  // Basic validation
+  if (!Array.isArray(questions) || questions.length === 0) {
+    return res.status(400).json({ status: false, message: "Invalid questions format." });
+  }
+
+  try {
+    // Validate each question
+    const newQuestions = questions.map(q => {
+      if (!q.subject || !q.grade || !q.question || !Array.isArray(q.choices) || !q.correctAnswer) {
+        throw new Error("Invalid question format");
+      }
+      return new Question(q);
+    });
+
+    // Save all questions to the database in bulk
+    await Question.insertMany(newQuestions);
+
+    // Send a success response
+    res.status(201).json({
+      status: true,
+      message: "Questions added successfully",
+      questions: newQuestions,
+    });
+  } catch (error) {
+    console.error("Error uploading questions:", error.message); // Improved error logging
+    res.status(500).json({ status: false, message: "Error uploading questions" });
+  }
+};
+ // Make sure to import your QuizResult model
+
+ module.exports.getQuizResults = async (req, res) => {
+  const token = req.cookies.token; // Extract token from cookies
+  if (!token) {
+    return res.status(401).json({ status: false, message: "No token provided" });
+  }
+
+  jwt.verify(token, process.env.TOKEN_KEY, async (err, decoded) => {
+    if (err) {
+      return res.status(403).json({ status: false, message: "Invalid or expired token" });
+    }
+
+    const userId = decoded.id; // Extract user ID from decoded token
+    const { subject } = req.query;
+
+    try {
+      // Fetch quiz results for the specific subject and sort by createdAt descending
+      const quizResults = await QuizResult.find({ userId, subject }).sort({ createdAt: -1 });
+
+      if (!quizResults.length) {
+        return res.status(404).json({ status: false, message: 'No quiz results found for this subject.' });
+      }
+
+      // Return the latest quiz and, if available, the second latest quiz
+      const latestQuiz = quizResults[0];
+      const previousQuiz = quizResults[1] || null; // Set previousQuiz to null if it doesn't exist
+
+      return res.status(200).json({
+        status: true,
+        latestQuiz,
+        previousQuiz
+      });
+    } catch (error) {
+      console.error('Error fetching quiz results:', error);
+      return res.status(500).json({ status: false, message: 'Failed to fetch quiz results.' });
     }
   });
 };

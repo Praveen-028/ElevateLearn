@@ -75,7 +75,7 @@ const Statistics = () => {
 
   return (
     <div className="statistics-container">
-      <h1>Your Statistics</h1>
+      <h2>Your Statistics</h2>
       {loading ? (
         <p>Loading...</p>
       ) : (

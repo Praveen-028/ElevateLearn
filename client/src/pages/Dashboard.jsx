@@ -76,72 +76,56 @@ const Dashboard = () => {
 
   return (
     <div className="dashboard-container">
-      {/* Navbar */}
-      <div className="navbar">
-        <div className="site-title">Elevate Learn</div>
-        <div className="welcome-message">Welcome, {username || 'User'}!</div>
-      </div>
+  {/* Sidebar */}
+  <div className="dsidebar">
+    <div className="welcome-message">Welcome, {username || 'User'}!</div>
+    <div className="button-section">
+      <button className="profile-btn" onClick={() => navigate('/profile')}>
+        Profile
+      </button>
+      <button className="quiz-btn" onClick={() => navigate('/QuizPage')}>
+        Take Quiz
+      </button>
+      <button className="logout-btn" onClick={handleLogout}>
+        Logout
+      </button>
+    </div>
+  </div>
+  <div className="Naa">
+  <h2>Dashboard</h2>
+  {/* Main content (like stats, history, feedback) */}
+  <div className="main-content">
 
-      {loading ? (
-        <p>Loading...</p> // Show loading message while fetching username
-      ) : null}
+    {/* User Statistics Section */}
+    <div className="stats-section">
+      <h2>Statistics</h2>
+      <p className="insidestats">Total Quizzes Taken: {statistics.totalQuizzes}</p>
+      <button className="quiz-comparison-button" onClick={() => navigate('/QuizComparison')}>
+        <span className="arrow-icon">➔</span> {/* Right arrow icon */}
+      </button>
+    </div>
 
-      {/* Centered Buttons Section */}
-      <div className="button-section">
-        <button className="profile-btn" onClick={() => navigate('/profile')}>
-          Profile
-        </button>
-        <button className="quiz-btn" onClick={() => navigate('/QuizPage')}>
-          Take Quiz
-        </button>
-        <button className="logout-btn" onClick={handleLogout}>
-          Logout
-        </button>
-      </div>
+    {/* History Section */}
+    <div className="stats-section">
+      <h2>History</h2>
+      <p>View the past quizzes</p>
+      <button className="quiz-comparison-button" onClick={() => navigate('/quizresults')}>
+        <span className="arrow-icon">➔</span>
+      </button>
+    </div>
 
-{/* User Statistics Section */}
-<div className="stats-section">
-  <h2>Statistics</h2>
-  <p className="insidestats">Total Quizzes Taken: {statistics.totalQuizzes}</p>
-  {/* Uncomment this line if you want to show the average score */}
-  {/* <p>Average Score: {statistics.totalQuizzes > 0 ? statistics.averageScore.toFixed(2) : 'N/A'}%</p> */}
-
-  <button 
-    className="quiz-comparison-button" 
-    onClick={() => navigate('/QuizComparison')}
-  >
-    <span className="arrow-icon">➔</span> {/* Right arrow icon */}
-  </button>
+    {/* Feedback Section */}
+    <div className="stats-section">
+      <h2>Feedback</h2>
+      <p>View the past quizzes</p>
+      <button className="quiz-comparison-button" onClick={() => navigate('/FeedbackPage')}>
+        <span className="arrow-icon">➔</span>
+      </button>
+    </div>
+    </div>
+  </div>
 </div>
 
-
-      {/* Recent Activities Section */}
-      <div className="stats-section">
-        <h2>History</h2>
-        {/* Placeholder for recent activities */}
-        {/* You can display recent activities here */}
-        <p> View the past quizzes</p>
-        <button 
-    className="quiz-comparison-button" 
-    onClick={() => navigate('/quizresults')}
-  >
-    <span className="arrow-icon">➔</span> {/* Right arrow icon */}
-  </button>
-      </div>
-      <div className="stats-section">
-        <h2>Feedback</h2>
-        {/* Placeholder for recent activities */}
-        {/* You can display recent activities here */}
-        <p> View the past quizzes</p>
-        <button 
-    className="quiz-comparison-button" 
-    onClick={() => navigate('/quizresult')}
-  >
-    <span className="arrow-icon">➔</span> {/* Right arrow icon */}
-  </button>
-      </div>
-
-    </div>
   );
 };
 

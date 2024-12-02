@@ -1,5 +1,5 @@
 import { Route, Routes } from "react-router-dom";
-import { Login, Signup,Dashboard,Profile,QuizPage,Instructions,Testpage,ResultPage,Statistics,QuizComparison,QuizDetails,QuizResults } from "./pages";
+import { Login, Signup,Dashboard,Profile,QuizPage,Instructions,Testpage,ResultPage,Statistics,QuizComparison,QuizDetails,QuizResults,AddQuestion,FeedbackPage } from "./pages";
 import Home from "./pages/Home";
 
 function App() {
@@ -19,6 +19,8 @@ function App() {
         <Route path="/QuizComparison" element={<QuizComparison/>}/>
         <Route path="/quizdetails" element={<QuizDetails/>}/>
         <Route path="/quizresults" element={<QuizResults/>}/>
+        <Route path="/admin" element={<AddQuestion/>}/>
+        <Route path="/FeedbackPage" element={<FeedbackPage/>}/>
         
       </Routes>    
     </div>

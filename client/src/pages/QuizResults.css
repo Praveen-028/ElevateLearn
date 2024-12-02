@@ -1,161 +1,194 @@
-/* General container settings */
-.quiz-results-container {
-    max-width: 1300px;
-    margin: 20px auto;
-    padding: 30px;
-    border-radius: 12px;
-    background-color: #ffffff;
-    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.12);
-    overflow-y: auto; /* Keep the scrolling behavior */
-    height: 95vh;
-    font-family: 'Arial', sans-serif;
+/* Main layout */
+.quiz-results-page {
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    scrollbar-width: none; /* For Firefox, hide scrollbar */
-}
-
-/* Hide scrollbar for WebKit-based browsers (Chrome, Safari) */
-.quiz-results-container::-webkit-scrollbar {
-    width: 0;
-    height: 0;
-}
-
-/* Title */
-.results-title {
-    font-size: 28px;
-    font-weight: bold;
-    color: #2c3e50;
-    margin-bottom: 20px;
-    text-align: center;
-}
-
-/* Adjust card container to allow more cards */
-.card-container {
+    height: 100vh;
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f7fa; /* Light background for better contrast */
+  }
+  
+  /* Sidebar styles */
+  .sidebar {
+    width: 250px;
+    background-color: #343a40; /* Darker background for sidebar */
+    padding: 20px;
+    border-right: 1px solid #dee2e6;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    color: white;
+  }
+  
+  .sidebar h3 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    color: #f8f9fa; /* Lighter color for headings */
+  }
+  
+  .sidebar ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .sidebar li {
+    cursor: pointer;
+    padding: 12px 15px;
+    margin-bottom: 10px;
+    background-color: #007bff; /* Primary color for items */
+    color: white;
+    border-radius: 5px;
+    transition: background-color 0.3s, transform 0.2s; /* Add transform for a subtle effect */
+  }
+  
+  .sidebar li:hover {
+    background-color: #0056b3; /* Darker shade on hover */
+    transform: scale(1.05); /* Slightly enlarge on hover */
+  }
+  
+  /* Quiz results container */
+  .quiz-results-container {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+  }
+  
+  .subject-group {
+    margin-bottom: 40px;
+  }
+  
+  .subject-separator {
+    margin: 10px 0;
+    border: none;
+    height: 2px;
+    background-color: #007bff; /* Primary color separator */
+  }
+  
+  .card-container {
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;
-    gap: 10px;
-    width: 100%;
-}
-
-/* Individual quiz card */
-.quiz-card {
-    padding: 15px;
-    border: 1px solid #e5e5e5;
+    gap: 15px;
+  }
+  
+  /* Improved quiz card styles */
+  .quiz-card {
+    background-color: #ffffff; /* White background for cards */
+    padding: 20px;
+    border: 2px solid #111010;
     border-radius: 10px;
-    background-color: #f9f9f9;
-    cursor: pointer;
-    transition: transform 0.3s, box-shadow 0.3s, background-color 0.3s;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    position: relative;
-    width: 100%;
-    max-width: 220px;
-    min-height: 160px;
-    text-align: left;
-}
-
-/* Arrow effect with a blue circle */
-.quiz-card::after {
-    content: '→'; /* Right arrow symbol */
-    position: absolute;
-    right: -30px;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 22px;
-    color: #fff;
-    background-color: #007bff; /* Blue background for circle */
-    width: 30px; /* Width of the circle */
-    height: 30px; /* Height of the circle */
-    border-radius: 50%; /* Create a circular shape */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0;
-    transition: opacity 0.3s ease, right 0.3s ease;
-}
-
-/* Hover effect for the arrow and circle */
-.quiz-card:hover::after {
-    opacity: 1;
-    right: 8px; /* Arrow moves closer on hover */
-}
-
-/* Hover effect for the quiz card */
-.quiz-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
-    background-color: #f1f1f1;
-}
-
-/* Card title */
-.quiz-card h3 {
-    font-size: 18px;
-    font-weight: 600;
-    color: #34495e;
-    margin-bottom: 8px;
-}
-
-/* Card paragraph */
-.quiz-card p {
-    font-size: 14px;
-    color: #7f8c8d;
-    margin: 5px 0;
-}
-
-/* Correct and incorrect answers */
-.correct {
-    color: #28a745;
-}
-
-.incorrect {
-    color: #dc3545;
-}
-
-/* Button container */
-.button-container {
-    margin-top: 20px;
-    display: flex;
-    justify-content: flex-start;
-    gap: 10px;
-}
-
-/* Button styling */
-.restart-btn {
-    padding: 10px 15px;
+    cursor: pointer;        
+    width: calc(50% - 20px); /* Adjust width for two columns */
+    transition: box-shadow 0.3s, transform 0.2s; /* Add box shadow and transform */
+  }
+  
+  .quiz-card:hover {
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* Elevate card on hover */
+    transform: translateY(-2px); /* Slight lift on hover */
+  }
+  
+  /* Quiz details styles */
+  .quiz-details {
+    padding: 20px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .quiz-details h2 {
+    margin-bottom: 10px;
+    font-size: 1.8rem; /* Increased heading size */
+    color: #343a40; /* Darker text for better readability */
+  }
+  
+  .quiz-details ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .quiz-details li {
+    margin-bottom: 15px;
+    padding: 10px;
+    border-left: 4px solid #007bff; /* Accent border for clarity */
+    background-color: #f8f9fa; /* Light background for quiz details */
+  }
+  
+  /* Button styles */
+  button {
     background-color: #007bff;
     color: white;
     border: none;
-    border-radius: 5px;
+    padding: 10px 20px;
     cursor: pointer;
-    font-size: 14px;
-    transition: background-color 0.3s, transform 0.2s;
-}
-
-.restart-btn:hover {
+    border-radius: 5px;
+    transition: background-color 0.3s, transform 0.2s; /* Add transform */
+  }
+  
+  button:hover {
     background-color: #0056b3;
-    transform: scale(1.05);
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
+    transform: translateY(-2px); /* Lift effect on hover */
+  }
+  
+  /* Error message styling */
+  .error-message {
+    color: #dc3545; /* Bootstrap danger color */
+    font-weight: bold;
+    margin-top: 20px;
+  }
+  
+  /* Responsive design for smaller screens */
+  @media (max-width: 768px) {
+    .quiz-results-page {
+      flex-direction: column; /* Stack sidebar and results */
+    }
+    
+    .sidebar {
+      width: 100%; /* Full width on smaller screens */
+      border-right: none; /* Remove border */
+      border-bottom: 1px solid #dee2e6; /* Add bottom border */
+    }
+    
     .quiz-results-container {
-        padding: 15px;
+      padding: 10px; /* Adjust padding */
     }
-
+  
     .quiz-card {
-        max-width: 100%;
+      width: calc(100% - 15px); /* Full width on smaller screens */
     }
-
-    .card-container {
-        gap: 5px;
-    }
-
-    .results-title {
-        font-size: 24px;
-    }
-}
-
-h2 {
-    color: black;
-}
+  }
+  
+  /* Improved quiz card styles */
+.quiz-card {
+    background-color: #ffffff; /* White background for cards */
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    cursor: pointer;
+    width: calc(50% - 15px); /* Adjust width for two columns */
+    transition: box-shadow 0.3s, transform 0.2s; /* Add box shadow and transform */
+    position: relative; /* Required for positioning the arrow */
+  }
+  
+  .quiz-card:hover {
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* Elevate card on hover */
+    transform: translateY(-2px); /* Slight lift on hover */
+  }
+  
+  /* Arrow effect */
+  .quiz-card::after {
+    content: ''; /* Necessary for the pseudo-element */
+    position: absolute; /* Position relative to the card */
+    right: 20px; /* Position it towards the right */
+    top: 50%; /* Center vertically */
+    transform: translateY(-50%); /* Adjust to center */
+    width: 0; 
+    height: 0; 
+    border-left: 10px solid transparent; /* Create a triangle */
+    border-right: 10px solid transparent; /* Create a triangle */
+    border-top: 10px solid #007bff; /* Color of the arrow */
+    opacity: 0; /* Initially hidden */
+    transition: opacity 0.3s; /* Smooth transition */
+  }
+  
+  .quiz-card:hover::after {
+    opacity: 1; /* Show arrow on hover */
+  }
+  

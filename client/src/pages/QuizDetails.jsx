@@ -61,7 +61,7 @@ const QuizDetails = () => {
                 <p className="error-message">{error}</p> // Display error message if any
             ) : (
                 <div className="quiz-detail">
-                    <h1>{quizDetail.title}</h1> {/* Display quiz title */}
+                    <h2>{quizDetail.title}</h2> {/* Display quiz title */}
                     <p>{quizDetail.description}</p> {/* Display quiz description */}
                     <div className="quiz-details">
                         <h2>Quiz Details:</h2>

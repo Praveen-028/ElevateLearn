@@ -7,9 +7,12 @@ const {
     getQuizStatistics,
     compareQuizResultsBySubject,
     compareRecentQuizzesBySubject,
-    getQuizComparison
+    getQuizComparison,
+    addQuestion,
+    uploadQuestions,
+    getQuizResults
 } = require("../Controllers/QuizController");
-const { getSubjects, getQuizResults, getQuizResult,getQuestionsBySubject,storeFeedback } = require("../Controllers/SubQuesController");
+const { getSubjects, getQuizResult,getQuestionsBySubject,storeFeedback,newQuizresultsave,getMaterialByTopic } = require("../Controllers/SubQuesController");
 
 router.post("/signup", Signup);
 router.post("/login", Login);
@@ -25,11 +28,14 @@ router.get("/compareQuizResultsBySubject", compareQuizResultsBySubject);
 router.get("/compareRecentQuizzes", compareRecentQuizzesBySubject);
 router.get("/getQuizComparison", getQuizComparison);
 router.get("/getSubjects", getSubjects);
-router.get("/quizresults", getQuizResults);
-
-// Define the route to get a specific quiz result by quizAttemptId
-router.post("/quizresult", getQuizResult); // Specify the route parameter here
+router.get("/quizresults",getQuizResults)
+router.get("/getQuizResultts",newQuizresultsave)
 router.get("/quizresult", getQuizResult);
 router.get("/questions",getQuestionsBySubject);
 router.post("/feedback",storeFeedback);
+router.post("/question", addQuestion);
+router.post("/upload-questions",uploadQuestions);
+router.get("/getMaterial", getMaterialByTopic);
+
+
 module.exports = router;

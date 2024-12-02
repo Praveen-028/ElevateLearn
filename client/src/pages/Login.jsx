@@ -30,45 +30,52 @@ const Login = () => {
       position: "bottom-left",
     });
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const { data } = await axios.post(
-        "http://localhost:4000/login",
-        {
-          ...inputValue,
-        },
-        { withCredentials: true }
-      );
-      const { success, message } = data;
-      if (success) {
-        handleSuccess(message);
-        setTimeout(() => {
-          navigate("/");
-        }, 1000);
-      } else {
-        handleError(message);
+    const handleSubmit = async (e) => {
+      e.preventDefault();
+      
+      try {
+        // Check if admin credentials are provided
+        if (email === "Admin" && password === "admin@123") {
+          handleSuccess("Admin login successful");
+          setTimeout(() => {
+            navigate("/admin"); // Redirect to admin module
+          }, 1000);
+        } else {
+          // Otherwise, proceed with regular user login
+          const { data } = await axios.post(
+            "http://localhost:4000/login",
+            {
+              ...inputValue,
+            },
+            { withCredentials: true }
+          );
+          const { success, message } = data;
+          if (success) {
+            handleSuccess(message);
+            setTimeout(() => {
+              navigate("/dashboard"); // Redirect to regular dashboard
+            }, 1000);
+          } else {
+            handleError(message);
+          }
+        }
+      } catch (error) {
+        console.error(error);
+        handleError("An error occurred. Please try again.");
       }
-    } catch (error) {
-      console.error(error);
-      handleError("An error occurred. Please try again.");
-    }
     
-    // Reset input values after submission
-    setInputValue({
-      email: "",
-      password: "",
-    });
-  };
+      // Reset input values after submission
+      setInputValue({
+        email: "",
+        password: "",
+      });
+    };
+    
 
   return (
     <div>
       <header className="header1">
         <nav className="navbar1">
-          <a href="#">Home</a>
-          <a href="#">About</a>
-          <a href="#">Services</a>
-          <a href="#">Contact</a>
         </nav>
         {/* <form className="search-bar">
           <input type="text" placeholder="Search..." />
@@ -99,7 +106,7 @@ const Login = () => {
               <div className="input-box">
                 <span className="icon"><i className='bx bx-envelope'></i></span>
                 <input
-                  type="email"
+                  type="text"
                   name="email"
                   value={email}
                   onChange={handleOnChange}

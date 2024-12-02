@@ -77,10 +77,6 @@ const Signup = () => {
     <div>
       <header className="header1">
         <nav className="navbar1">
-          <Link to="/">Home</Link>
-          <Link to="/about">About</Link>
-          <Link to="/services">Services</Link>
-          <Link to="/contact">Contact</Link>
         </nav>
         {/* <form className="search-bar">
           <input type="text" placeholder="Search..." />

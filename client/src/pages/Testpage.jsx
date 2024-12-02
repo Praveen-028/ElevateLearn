@@ -1,19 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { v4 as uuidv4 } from 'uuid'; // Import uuid for generating unique IDs
-import axios from 'axios'; // Import Axios for HTTP requests
-import './TestPage.css'; // Import the CSS file
+import axios from 'axios';
+import './TestPage.css'; // Import your CSS
 
 const TestPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { subject } = location.state; // Retrieve subject from the navigation state
-  const [questions, setQuestions] = useState([]); // State to hold fetched questions
+  const { topics, subject } = location.state; // Retrieve subject and topics from navigation state
+  const [questionsByTopic, setQuestionsByTopic] = useState([]); // State to hold questions organized by topic
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState('');
   const [answers, setAnswers] = useState({});
-  const [timeRemaining, setTimeRemaining] = useState(7200); // 2 hours in seconds
-  const currentQuestion = questions[currentQuestionIndex];
+  const [timeRemaining, setTimeRemaining] = useState(0); // Set initial time remaining
 
   // Fetch questions from backend on component mount
   useEffect(() => {
@@ -22,7 +20,11 @@ const TestPage = () => {
         const response = await axios.get(`http://localhost:4000/questions`, {
           params: { subject }, // Pass the subject as a query parameter
         });
-        setQuestions(response.data.questions); // Set the questions received from the backend
+        setQuestionsByTopic(response.data.questionsByTopic); // Set the questions received from the backend
+
+        // Set dynamic time based on total number of questions
+        const totalQuestions = response.data.questionsByTopic.flatMap(topic => topic.questions).length;
+        setTimeRemaining(totalQuestions * 120); // 2 minutes (120 seconds) per question
       } catch (error) {
         console.error('Error fetching questions:', error);
       }
@@ -30,11 +32,21 @@ const TestPage = () => {
     fetchQuestions();
   }, [subject]);
 
+  // Function to get the current question based on the global index
+  const getCurrentQuestion = () => {
+    if (questionsByTopic.length === 0) return null;
+
+    const flatQuestions = questionsByTopic.flatMap(topic => topic.questions); // Flatten all questions into a single array
+    return flatQuestions[currentQuestionIndex] || null;
+  };
+
+  const currentQuestion = getCurrentQuestion(); // Now, we can safely use this here
+
   // Countdown Timer
   useEffect(() => {
     if (timeRemaining <= 0) {
-      alert('Time is up!');
-      handleSubmit(); // Automatically submit when time is up
+      // alert('Time is up!');
+      // handleSubmit(); // Automatically submit when time is up
       return;
     }
 
@@ -80,50 +92,43 @@ const TestPage = () => {
     };
   }, []);
 
-  const handleNext = () => {
-    if (!selectedAnswer) {
-      alert('Please answer the question before proceeding to the next one.');
-      return;
-    }
-
-    // Save the current answer before navigating to the next question
-    setAnswers((prevAnswers) => ({
-      ...prevAnswers,
-      [currentQuestionIndex]: selectedAnswer,
-    }));
-
-    if (currentQuestionIndex < questions.length - 1) {
-      setCurrentQuestionIndex(currentQuestionIndex + 1);
-      setSelectedAnswer(answers[currentQuestionIndex + 1] || ''); // Retain the answer if user revisits
-    }
-  };
-
-  const handlePrev = () => {
-    if (currentQuestionIndex > 0) {
-      // Save the current answer before navigating to the previous question
-      if (selectedAnswer) {
-        setAnswers((prevAnswers) => ({
-          ...prevAnswers,
-          [currentQuestionIndex]: selectedAnswer,
-        }));
-      }
-
-      setCurrentQuestionIndex(currentQuestionIndex - 1);
-      setSelectedAnswer(answers[currentQuestionIndex - 1] || ''); // Retain the answer if user revisits
-    }
-  };
-
-  const handleSubmit = () => {
-    // Save the last selected answer
+  // Save current answer helper function
+  const saveCurrentAnswer = () => {
     if (selectedAnswer) {
       setAnswers((prevAnswers) => ({
         ...prevAnswers,
         [currentQuestionIndex]: selectedAnswer,
       }));
     }
+  };
+
+  // Handle Next button click
+  const handleNext = () => {
+    saveCurrentAnswer();
+    const totalQuestions = questionsByTopic.flatMap(topic => topic.questions).length;
+    if (currentQuestionIndex < totalQuestions - 1) {
+      setCurrentQuestionIndex(currentQuestionIndex + 1);
+      setSelectedAnswer(answers[currentQuestionIndex + 1] || ''); // Retain the answer if user revisits
+    }
+  };
+
+  // Handle Previous button click
+  const handlePrev = () => {
+    saveCurrentAnswer();
+    if (currentQuestionIndex > 0) {
+      setCurrentQuestionIndex(currentQuestionIndex - 1);
+      setSelectedAnswer(answers[currentQuestionIndex - 1] || ''); // Retain the answer if user revisits
+    }
+  };
+
+  // Handle Submit button click
+  const handleSubmit = () => {
+    // Save the last selected answer
+    saveCurrentAnswer();
 
     // Check if all questions are answered
-    for (let i = 0; i < questions.length; i++) {
+    const totalQuestions = questionsByTopic.flatMap(topic => topic.questions).length;
+    for (let i = 0; i < totalQuestions; i++) {
       if (!answers[i]) {
         alert('Please answer all questions before submitting.');
         return; // Prevent submission if not all questions are answered
@@ -133,20 +138,27 @@ const TestPage = () => {
     const confirmation = window.confirm('Are you sure you want to submit your test?');
     if (confirmation) {
       // Calculate score
+      const flatQuestions = questionsByTopic.flatMap(topic => topic.questions);
       const finalAnswers = { ...answers }; // Include all saved answers
-      const score = questions.reduce((acc, question, index) => {
+      const score = flatQuestions.reduce((acc, question, index) => {
         if (finalAnswers[index] === question.correctAnswer) {
           return acc + 1;
         }
         return acc;
       }, 0);
-
+      console.log('Data being passed to ResultsPage:', {
+        score,
+        totalQuestions: flatQuestions.length,
+        questions: flatQuestions, // Ensure questions are passed here
+        userAnswers: finalAnswers, // Pass the final answers
+        subject, // Include the subject here
+      });
       // Navigate to results page with score, questions, user answers, and attemptId
       navigate('/ResultsPage', {
         state: {
           score,
-          totalQuestions: questions.length,
-          questions, // Ensure questions are passed here
+          totalQuestions: flatQuestions.length,
+          questions: flatQuestions, // Ensure questions are passed here
           userAnswers: finalAnswers, // Pass the final answers
           subject, // Include the subject here
         },
@@ -154,7 +166,9 @@ const TestPage = () => {
     }
   };
 
-  const isLastQuestion = currentQuestionIndex === questions.length - 1;
+  // Dynamically determine if the current question is the last question
+  const totalQuestions = questionsByTopic.flatMap(topic => topic.questions).length;
+  const isLastQuestion = currentQuestionIndex === totalQuestions - 1;
 
   const formatTime = (seconds) => {
     const hours = Math.floor(seconds / 3600);
@@ -163,40 +177,58 @@ const TestPage = () => {
     return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
   };
 
+  // Reset timer when questions are fetched
+  useEffect(() => {
+    if (questionsByTopic.length > 0 && timeRemaining === 0) {
+      const totalQuestions = questionsByTopic.flatMap(topic => topic.questions).length;
+      setTimeRemaining(totalQuestions * 120); // Reset timer for 2 minutes per question
+    }
+  }, [questionsByTopic]);
+
   return (
     <div className="test-page-container">
       <header className="test-page-header">
-        <h1>{subject} Quiz</h1>
-        <div className="timer">
+        <h2>{subject} Quiz - {questionsByTopic[Math.floor(currentQuestionIndex / 5)]?.topic || ''}</h2>
+        <div className="test-page-timer">
           <p>Time Remaining: {formatTime(timeRemaining)}</p>
         </div>
       </header>
       <div className="test-page-content">
-        <div className="sidebar">
-          {questions.map((_, index) => (
-            <button
-              key={index}
-              className={`sidebar-button ${answers[index] ? 'answered' : ''}`}
-              onClick={() => {
-                setCurrentQuestionIndex(index);
-                setSelectedAnswer(answers[index] || '');
-              }}
-            >
-              {index + 1}
-            </button>
+        <div className="test-page-sidebar">
+          {questionsByTopic.map((topic, topicIndex) => (
+            <div key={topicIndex}>
+              <h3>{topic.topic}</h3>
+              {topic.questions.map((_, questionIndex) => {
+                const globalIndex = topicIndex * topic.questions.length + questionIndex; // Correct global index calculation
+                return (
+                  <button
+                    key={globalIndex}
+                    className={`test-page-sidebar-button ${answers[globalIndex] ? 'answered' : ''}`}
+                    onClick={() => {
+                      setCurrentQuestionIndex(globalIndex);
+                      setSelectedAnswer(answers[globalIndex] || '');
+                    }}
+                  >
+                    {globalIndex + 1} {/* Ensure numbering starts at 1 */}
+                  </button>
+                );
+              })}
+            </div>
           ))}
         </div>
-        <div className="question-content">
+        <div className="test-page-question-content">
           <h2>Question {currentQuestionIndex + 1}</h2>
           {currentQuestion && (
             <>
               <p>{currentQuestion.question}</p>
+              
               {currentQuestion.choices.map((choice, index) => (
-                <div key={index}>
+                <div key={index} className='Test-Choice'>
                   <input
                     type="radio"
                     id={`choice-${index}`}
                     name="choice"
+                    className='forrr'
                     value={choice}
                     checked={selectedAnswer === choice}
                     onChange={() => setSelectedAnswer(choice)}
@@ -204,19 +236,19 @@ const TestPage = () => {
                   <label htmlFor={`choice-${index}`}>{choice}</label>
                 </div>
               ))}
-              <div className="navigation-buttons">
+              <div className="test-page-navigation-buttons">
                 {currentQuestionIndex > 0 && (
-                  <button className="prev-button" onClick={handlePrev}>
+                  <button className="test-page-prev-button" onClick={handlePrev}>
                     Previous
                   </button>
                 )}
-                {!isLastQuestion && (
-                  <button className="next-button" onClick={handleNext}>
+                {currentQuestionIndex < totalQuestions - 1 && (
+                  <button className="test-page-next-button" onClick={handleNext}>
                     Next
                   </button>
                 )}
                 {isLastQuestion && (
-                  <button className="submit-button" onClick={handleSubmit}>
+                  <button className="test-page-submit-button" onClick={handleSubmit}>
                     Submit
                   </button>
                 )}

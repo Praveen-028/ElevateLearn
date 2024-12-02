@@ -1,198 +1,164 @@
-import React, { useEffect, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import './ResultsPage.css';
-
-// Function to send quiz results to the backend
-const sendQuizResults = async (quizResults, setSuccessMessage, setError) => {
-  try {
-    const response = await fetch('http://localhost:4000/storequiz', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(quizResults),
-      credentials: 'include', // Ensures cookies are sent with the request
-    });
-
-    // Check if the response is valid JSON
-    const contentType = response.headers.get('Content-Type');
-    if (contentType && contentType.includes('application/json')) {
-      const data = await response.json();
-      if (data.status) {
-        setSuccessMessage('Quiz results stored successfully.');
-      } else {
-        setError(data.message || 'Failed to store quiz results.');
-      }
-    } else {
-      setError('Invalid response format. Expected JSON.');
-    }
-  } catch (error) {
-    console.error('Error sending quiz results:', error);
-    setError('An error occurred while sending quiz results.');
-  }
-};
-
-// Function to send feedback to the backend
-const sendFeedback = async (feedbackData, setSuccessMessage, setError) => {
-  try {
-    const response = await fetch('http://localhost:4000/feedback', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(feedbackData),
-      credentials: 'include',
-    });
-
-    const data = await response.json();
-    if (data.status) {
-      setSuccessMessage('Feedback stored successfully.');
-    } else {
-      setError(data.message || 'Failed to store feedback.');
-    }
-  } catch (error) {
-    setError('An error occurred while sending feedback.');
-  }
-};
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from "react-router-dom";
+import { useLocation } from 'react-router-dom';
+import './ResultsPage.css'; // Import your CSS
 
 const ResultsPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  
+  const todash = () => {
+    navigate('/Dashboard');
+  };
 
-  // Destructure subject from location state
-  const { score = 0, totalQuestions = 0, questions = [], userAnswers = {}, subject, userId } = location.state || {};
+  const { score, totalQuestions, questions, userAnswers, subject } = location.state;
 
-  const [successMessage, setSuccessMessage] = useState(''); // To display success messages
-  const [error, setError] = useState(''); // To display error messages
-  const [loading, setLoading] = useState(true);
-  const [feedback, setFeedback] = useState(''); // New state for feedback
-  const [showFeedback, setShowFeedback] = useState(false);
+  // Group questions by topic
+  const topics = {};
+  questions.forEach((question, index) => {
+    const topic = question.topic;
+    if (!topics[topic]) {
+      topics[topic] = { questions: [], wrongAnswers: 0 };
+    }
+    topics[topic].questions.push({
+      question: question.question,
+      userAnswer: userAnswers[index],
+      correctAnswer: question.correctAnswer,
+    });
 
-  // Convert data into the format needed for submission
-  useEffect(() => {
-    const quizResults = {
-      userId,
-      subject: subject || 'Unknown',
-      score,
-      totalQuestions,
-      questions: questions.map((question, index) => ({
-        question: question.question,
-        correctAnswer: question.correctAnswer,
-        userAnswer: userAnswers[index] || 'No answer provided',
-        isCorrect: userAnswers[index] === question.correctAnswer,
-      })),
-    };
+    if (userAnswers[index] !== question.correctAnswer) {
+      topics[topic].wrongAnswers++;
+    }
+  });
 
-    // Call the function to send quiz results
-    const submitResults = async () => {
-      await sendQuizResults(quizResults, setSuccessMessage, setError);
-      setLoading(false); // Set loading to false after results submission
-    };
+  // Initialize expandedTopics with all topics expanded by default
+  const [expandedTopics, setExpandedTopics] = useState(
+    Object.keys(topics).reduce((acc, topic) => {
+      acc[topic] = true;
+      return acc;
+    }, {})
+  );
 
-    submitResults();
-  }, [userId, questions, score, totalQuestions, subject, userAnswers]);
+  // Function to toggle topic expansion
+  const toggleTopic = (topic) => {
+    setExpandedTopics(prevState => ({
+      ...prevState,
+      [topic]: !prevState[topic] // Toggle the expanded state of the topic
+    }));
+  };
 
-  // Function to generate feedback based on performance
-  const generateFeedback = () => {
-    const percentage = (score / totalQuestions) * 100;
-    let feedbackMessage = '';
+  const calculateWeaknesses = (questions) => {
+    const tempWeaknesses = questions
+      .filter(q => q.correctAnswer !== q.userAnswer)
+      .map(q => q.topics);
+    return [...new Set(tempWeaknesses)]; // Remove duplicates
+  };
 
-    if (percentage >= 90) {
-      feedbackMessage = 'Excellent performance! Keep it up!';
-    } else if (percentage >= 75) {
-      feedbackMessage = 'Great job! You did really well.';
-    } else if (percentage >= 50) {
-      feedbackMessage = 'Good effort! A bit more practice would help.';
-    } else {
-      feedbackMessage = 'Keep practicing, and you will improve!';
+  const handleSubmitResults = async () => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      alert('You need to be logged in to submit results.');
+      return;
     }
 
-    setFeedback(feedbackMessage);
-    setShowFeedback(true);
-  };
+    const userId = "userId"; // Replace with actual user ID
+    const weaknesses = calculateWeaknesses(questions);
 
-  // Function to handle feedback submission
-  const handleFeedbackSubmit = async () => {
-    const feedbackData = {
+    const formattedQuestions = questions.map((q, index) => ({
+      question: q.question,
+      topics: q.topic,
+      correctAnswer: q.correctAnswer,
+      userAnswer: userAnswers[index],
+      isCorrect: q.correctAnswer === userAnswers[index],
+    }));
+
+    const resultData = {
       userId,
-      quizId: location.state._id, // Assuming quiz ID is passed in location.state
-      feedback,
+      subject,
+      score,
+      totalQuestions,
+      weaknesses,
+      questions: formattedQuestions,
     };
 
-    await sendFeedback(feedbackData, setSuccessMessage, setError);
+    try {
+      const response = await fetch("http://localhost:4000/storequiz", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+        body: JSON.stringify(resultData),
+        credentials: 'include',
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        console.log(data.message);
+      } else {
+        console.error("Error saving results:", data.message);
+      }
+    } catch (error) {
+      console.error("Network error:", error);
+    }
   };
 
-  const handleRedirectToDashboard = () => {
-    navigate('/dashboard'); // Redirect to dashboard
-  };
+  // Identify weak topics (5 questions, 3 wrong)
+  const weakTopics = Object.entries(topics).filter(
+    ([, { questions, wrongAnswers }]) => questions.length >= 5 && wrongAnswers >= 3
+  );
 
   return (
     <div className="results-page-container">
       <header className="results-page-header">
-        <h1>Test Results</h1>
+        <h2>{subject} Results</h2>
+        <h2>Score: {score}/{totalQuestions}</h2>
       </header>
-
-      {loading ? (
-        <p>Submitting quiz results...</p>
-      ) : (
-        <>
-          <div className="score-section">
-            <p className="score-display">Your Score: {score} / {totalQuestions}</p>
-          </div>
-
-          <div className="results-scrollable-content">
-            <ul className="results-list">
-              {questions.map((question, index) => {
-                const userAnswer = userAnswers[index] || 'No answer provided';
-                const isCorrect = userAnswer === question.correctAnswer;
-
-                return (
-                  <li
-                    key={index}
-                    className={`question-result ${isCorrect ? 'correct' : userAnswers[index] ? 'incorrect' : 'unanswered'}`}
-                  >
-                    <h3>Question {index + 1}:</h3>
-                    <p><strong>Question:</strong> {question.question}</p>
-                    <p>
-                      <strong>Your Answer:</strong>
-                      <span className={isCorrect ? 'correct' : userAnswers[index] ? 'incorrect' : 'unanswered'}>
-                        {userAnswer}
-                      </span>
-                    </p>
-                    <p><strong>Correct Answer:</strong> {question.correctAnswer}</p>
-                  </li>
-                );
-              })}
+      <div className="results-content">
+        <div className="topics-panel">
+          <h3>Weak Topics</h3>
+          {weakTopics.length === 0 ? (
+            <p>No weak topics identified.</p>
+          ) : (
+            <ul>
+              {weakTopics.map(([topic, { questions }]) => (
+                <li key={topic}>
+                  <h4>{topic}</h4>
+                  <p>Questions answered incorrectly: {questions.filter(q => q.userAnswer !== q.correctAnswer).length}</p>
+                </li>
+              ))}
             </ul>
-          </div>
-
-          {/* Display error message if present */}
-          {error && <p className="error-message">{error}</p>}
-          {/* Display success message if results were submitted */}
-          {successMessage && <p className="success-message">{successMessage}</p>}
-
-          {/* Button to generate and display feedback */}
-          <button onClick={generateFeedback} className="generate-feedback-button">
-            View Feedback
-          </button>
-
-          {/* Display feedback if available */}
-          {showFeedback && (
-            <div className="feedback-section">
-              <p><strong>Feedback:</strong> {feedback}</p>
-              {/* Button to submit feedback */}
-              <button onClick={handleFeedbackSubmit} className="submit-feedback-button">
-                Submit Feedback
-              </button>
-            </div>
           )}
+        </div>
 
-          {/* Button to redirect to the dashboard */}
-          <button className="redirect-button" onClick={handleRedirectToDashboard}>
-            Go to Dashboard
-          </button>
-        </>
-      )}
+        <div className="questions-summary">
+          <h3>Questions Summary</h3>
+          {Object.entries(topics).map(([topic, { questions }]) => (
+            <div key={topic}>
+              <h4
+                onClick={() => toggleTopic(topic)} // Toggle on click
+                style={{ cursor: 'pointer' }}
+              >
+                {topic} {expandedTopics[topic] ? '-' : '+'} {/* Show + or - based on expanded state */}
+              </h4>
+              {expandedTopics[topic] && ( // Conditionally render questions based on expanded state
+                questions.map((item, index) => (
+                  <div
+                    key={index}
+                    className={`question-item ${item.userAnswer === item.correctAnswer ? 'correct' : 'incorrect'}`}
+                  >
+                    <p><strong>Q: </strong>{item.question}</p>
+                    <p><strong>Your Answer: </strong>{item.userAnswer}</p>
+                    <p><strong>Correct Answer: </strong>{item.correctAnswer}</p>
+                  </div>
+                ))
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+      <button onClick={handleSubmitResults}>Submit the result</button>
+      <button onClick={todash}>Back to Dashboard</button>
     </div>
   );
 };

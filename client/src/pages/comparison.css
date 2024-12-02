@@ -1,167 +1,115 @@
-/* Main container for the quiz comparison */
+/* Main page container */
+.quiz-comparison-page {
+  height: 100vh;
+  padding: 24px;
+  flex-direction: column;
+  display: flex;
+  justify-content: center;
+  align-items: center; /* Centers vertically */
+  background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAIAAACRXR/mAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1MAAA6mAAADqYAAAXb5JfxUYAAABnSURBVHja7M5RDYAwDEXRDgmvEocnlrQS2SwUFST9uEfBGWs9c97nbGtDcquqiKhOImLs/UpuzVzWEi1atGjRokWLFi1atGjRokWLFi1atGjRokWLFi1af7Ukz8xWp8z8AAAA//8DAJ4LoEAAlL1nAAAAAElFTkSuQmCC") repeat 0 0;
+  animation: bg-scrolling-reverse 0.92s infinite linear;
+  font-family: 'Arial', sans-serif;
+  color: #333;
+}
+
+/* Container for quiz comparison content */
 .quiz-comparison-container {
-    max-width: 1200px;
-    margin: 40px auto;
-    padding: 30px;
-    text-align: center;
-    background: #f5f7fa;
-    border-radius: 20px;
-    box-shadow: 0 6px 30px rgba(0, 0, 0, 0.15);
-    max-height: 90vh;
-    overflow-y: scroll;
-    -ms-overflow-style: none;  /* Internet Explorer and Edge */
-    scrollbar-width: none;  /* Firefox */
-  }
-  
-  /* Hides the scrollbar but keeps scrolling */
-  .quiz-comparison-container::-webkit-scrollbar {
-    display: none;
-  }
-  
-  /* Title Styling */
-  h1 {
-    font-size: 2.8rem;
-    color: #2980b9;
-    margin-bottom: 30px;
-    font-weight: 600;
-  }
-  
-  /* Grid for the subject cards */
-  .subject-selection-grid {
-    text-align: center;
-  }
-  
-  /* Grid layout for subjects */
-  .subject-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Responsive grid */
-    gap: 20px;
-    padding: 20px;
-  }
-  
-  /* Subject card design */
-  .subject-card {
-    background: linear-gradient(135deg, #6dd5ed, #2193b0); /* Gradient background */
-    color: white; /* Ensures text is visible */
-    padding: 25px;
-    border-radius: 15px;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1), 0 6px 6px rgba(0, 0, 0, 0.1);
-    cursor: pointer;
-    transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
-    text-align: center; /* Centers text */
-  }
-  
-  .subject-card:hover {
-    transform: translateY(-10px) scale(1.05); /* Elevates and enlarges on hover */
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15), 0 10px 10px rgba(0, 0, 0, 0.1);
-    background: linear-gradient(135deg, #76b852, #8dc26f); /* Changes gradient on hover */
-  }
-  
-  /* Subject card title */
-  .subject-card h3 {
-    margin: 0;
-    font-size: 1.6rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 1.2px;
-    margin-bottom: 10px; /* Adds space below the h3 for better alignment */
-  }
-  
-  /* Subject card paragraph */
-  .subject-card p {
-    font-size: 1rem;
-    margin-top: 10px;
-    color: rgba(255, 255, 255, 0.8); /* Lighter text color for contrast */
-    line-height: 1.5;
-  }
-  
-  /* Quiz details styling */
-  .quiz-details {
-    margin-bottom: 25px; /* Space between sections */
-    text-align: left; /* Aligns text to the left */
-    padding-left: 20px; /* Adds padding for better alignment */
-    width: 100%; /* Ensures the details take full width */
-  }
-  
-  /* Centers the entire comparison content */
+  display: flex;
+  justify-content: center; /* Centers horizontally */
+  align-items: center; /* Centers vertically */
+  flex-direction: row; /* Ensures the content remains in a row */
+  gap: 20px;
+  width: 90%; /* Adjust width as needed */
+  max-width: 1200px;
+}
+
+/* Flex properties to position chart and score difference */
+.comparison-content {
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 20px; /* Added padding for more space */
+  width: 100%;
+  max-width: 1200px;
+}
+
+/* Chart and score containers */
+.score-difference-container {
+  flex: 1;
+  max-height: 100%;
+  padding: 20px; /* Increase padding for larger content */
+  background-color: #fff;
+  border: 1px solid #ddd;
+  justify-items: center;
+  border-radius: 12px; /* Increase radius for better appearance */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Enhance shadow for a professional look */
+  font-size: 1.1rem; /* Increase font size for better readability */
+  overflow: auto;
+}
+
+/* Increase font size and spacing for content inside the containers */
+.chart-container {
+  flex: 1;
+  max-height: 100%;
+  padding: 20px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  font-size: 1.1rem;
+  display: flex; /* Use flexbox */
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
+  overflow: auto;
+}
+
+/* Ensure the canvas scales while keeping its proportions */
+.chart-container canvas {
+  max-width: 100%; /* Ensure canvas doesn't overflow the container */
+  max-height: 100%;
+  width: auto; /* Keep proportions */
+  height: auto;
+}
+
+.score-difference-container h2,
+.score-difference-container p {
+  margin-bottom: 20px;
+  font-size: 1.5rem; /* Larger font size for headers */
+  color: #333;
+}
+
+.score-difference-container .score-difference {
+  padding: 20px; /* Increase padding for more prominent content */
+  font-size: 2rem; /* Larger text for the score difference */
+  color: #2ecc71;
+  text-align: center;
+  border: 2px solid #2ecc71;
+  border-radius: 8px;
+  background-color: #eafaf1;
+}
+
+/* Back button style */
+.back-button {
+  align-self: flex-start;
+  padding: 12px 24px; /* Increase padding for a larger button */
+  background-color: #007bff;
+  font-size: 1.1rem; /* Larger font size */
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.back-button:hover {
+  background-color: #0056b3;
+}
+
+/* Responsive design for smaller screens */
+@media (max-width: 768px) {
   .comparison-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center; /* Centers the content horizontally */
+    flex-direction: column; /* Stack content on small screens */
+    padding: 10px;
   }
-  
-  /* Align <h3> and <p> properly */
-  .quiz-details h3 {
-    font-size: 1.8rem;
-    margin-bottom: 10px;
-    color: #2980b9; /* Darker blue for visibility */
-    font-weight: bold;
-  }
-  
-  .quiz-details p {
-    font-size: 1.2rem;
-    color: #34495e; /* Darker grey for contrast */
-    line-height: 1.5;
-    margin: 0; /* Removes unnecessary margin around <p> */
-  }
-  
-  /* Score difference section styling */
-  .score-difference {
-    margin-bottom: 25px; /* Adds space between sections */
-    text-align: left; /* Aligns text to the left */
-    width: 100%; /* Ensures the details take full width */
-    padding-left: 20px;
-  }
-  
-  .score-difference h3 {
-    font-size: 1.8rem;
-    margin-bottom: 10px;
-    color: #27ae60; /* Green to highlight improvements */
-  }
-  
-  .score-difference p {
-    font-size: 1.2rem;
-    color: #2ecc71; /* Lighter green for positive difference */
-    font-weight: 500;
-  }
-  
-  /* Back button styling */
-  .back-btn {
-    margin-top: 30px;
-    padding: 12px 25px;
-    font-size: 1.2rem;
-    color: #fff;
-    background-color: #3498db;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
-    transition: background-color 0.3s ease, box-shadow 0.3s ease;
-  }
-  
-  .back-btn:hover {
-    background-color: #2980b9;
-    box-shadow: 0 6px 20px rgba(52, 152, 219, 0.4);
-  }
-  
-  /* General paragraph styling */
-  p {
-    font-size: 1.3rem;
-    color: #7f8c8d; /* Grey for general text */
-    line-height: 1.6;
-  }
-  
-  /* Error message styling */
-  p.error {
-    color: #e74c3c; /* Red for errors */
-    font-weight: bold;
-  }
-  
-  /* Loading message styling */
-  .loading {
-    font-size: 1.5rem;
-    color: #9b59b6; /* Purple for loading indication */
-    font-weight: bold;
-    margin-top: 20px;
-  }
-  
+}

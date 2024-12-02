@@ -24,32 +24,54 @@ module.exports.Signup = async (req, res, next) => {
     console.error(error);
   }
 };
+ // Ensure you have this imported
 
 module.exports.Login = async (req, res, next) => {
-    try {
-      const { email, password } = req.body;
-      if(!email || !password ){
-        return res.json({message:'All fields are required'})
-      }
-      const user = await User.findOne({ email });
-      if(!user){
-        return res.json({message:'Incorrect password or email' }) 
-      }
-      const auth = await bcrypt.compare(password,user.password)
-      if (!auth) {
-        return res.json({message:'Incorrect password or email' }) 
-      }
-       const token = createSecretToken(user._id);
-       res.cookie("token", token, {
-         withCredentials: true,
-         httpOnly: false,
-       });
-       res.status(201).json({ message: "User logged in successfully", success: true });
-       next()
-    } catch (error) {
-      console.error(error);
+  try {
+    const { email, password } = req.body;
+
+    // Check for empty fields
+    if (!email || !password) {
+      return res.status(400).json({ message: 'All fields are required' });
     }
-  };
+
+    // Admin login check
+    if (email === "Admin" && password === "admin@123") {
+      req.session.user = { role: 'admin' }; // Set the session for admin
+      return res.json({ success: true, message: "Admin login successful" });
+    }
+
+    // Regular user login logic
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(401).json({ message: 'Incorrect password or email' });
+    }
+
+    // Compare passwords
+    const auth = await bcrypt.compare(password, user.password);
+    if (!auth) {
+      return res.status(401).json({ message: 'Incorrect password or email' });
+    }
+
+    // Create and set the token for the user session
+    const token = createSecretToken(user._id);
+    res.cookie("token", token, {
+      withCredentials: true,
+      httpOnly: false,
+      secure: process.env.NODE_ENV === 'production', // Set to true in production
+      sameSite: 'strict' // Adjust based on your app's needs
+    });
+
+    // Successful login response
+    res.status(200).json({ message: "User logged in successfully", success: true });
+    
+    // Call next middleware if needed
+    next();
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Server error" });
+  }
+};
 
 module.exports.userextract = async(req, res) => {
     const token = req.cookies.token;  // Extract token from cookies

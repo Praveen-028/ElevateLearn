@@ -15,6 +15,7 @@ module.exports.userVerification = async (req, res) => {
       const user = await User.findById(data.id);
       if (user) {
         // Adding username and currentGrade to the cookies
+        res.cookie('UserId',user._id)
         res.cookie('username', user.username, { httpOnly: true });
         res.cookie('currentGrade', user.currentGrade, { httpOnly: true });
 

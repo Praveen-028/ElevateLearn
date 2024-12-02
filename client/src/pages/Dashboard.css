@@ -1,174 +1,207 @@
-/* Set body and html height to 100% */
-html, body {
-  height: 100%;
-  margin: 0;
-  padding: 0;
-  overflow: hidden; /* Prevent double scrolling */
-  font-family: 'Arial', sans-serif; /* Use a clean, modern font */
-}
-
-/* Dashboard container with a background image */
 .dashboard-container {
-  max-width: 1500px;
-  margin: 0 auto;
-  padding: 20px;
-  background-image: url('images/5.jpg');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
-  border-radius: 15px; /* Slightly more rounded corners */
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
-  position: relative;
-  min-height: 100vh;
+	display: flex;
+	min-height: 100vh;
+	padding: 0;
+	background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAIAAACRXR/mAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1MAAA6mAAADqYAAAXb5JfxUYAAABnSURBVHja7M5RDYAwDEXRDgmvEocnlrQS2SwUFST9uEfBGWs9c97nbGtDcquqiKhOImLs/UpuzVzWEi1atGjRokWLFi1atGjRokWLFi1atGjRokWLFi1af7Ukz8xWp8z8AAAA//8DAJ4LoEAAlL1nAAAAAElFTkSuQmCC) repeat 0 0;
+	animation: bg-scrolling-reverse 2s infinite linear;
+	font-family: 'Exo', sans-serif;
+}
+.Naa{
+  width: 100%;
+}
+.dsidebar {
+  width: 225px;
+  background-color: rgba(0, 0, 0, 0.5); /* Adjusted alpha value for translucency */
+  color: white;
+  margin-left: 1%;
+  
+  padding: 2rem;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  color: white;
+  align-items: flex-start;
 }
 
-/* Navbar styles */
-.navbar {
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 15px 30px;
-  background-color: rgba(0, 0, 0, 0.8); /* Darker background for contrast */
-  border-radius: 8px;
-  margin-bottom: 30px;
-}
-
-/* Header styles */
-.site-title {
-  font-size: 36px; /* Larger font for title */
-  font-weight: bold;
-  color: #FFD700;
-  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.9);
-}
 
 .welcome-message {
-  font-size: 22px; /* Slightly larger welcome message */
-  color: #FFFFFF;
-  text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.6);
+	font-size: 1.5rem;
+	margin-bottom: 2rem;
+	font-weight: bold;
 }
 
-/* Button styles */
-.profile-btn, .quiz-btn, .logout-btn {
-  display: inline-block;
-  padding: 14px 28px; /* Slightly larger padding */
-  font-size: 18px; /* Larger font size */
-  background-color: #007BFF; /* Button background color */
-  color: #FFFFFF;
+.button-section {
+	display: flex;
+  align-items: center;
+	flex-direction: column;
+	gap: 1.5rem;
+}
+
+button {
+  width: 100%;
+  padding: 0.8rem;
+  font-size: 1.1rem;
+  font-family: 'Roboto', sans-serif; /* Use a clean, professional font */
+  color: #fff;
   border: none;
-  border-radius: 8px; /* Rounded corners for buttons */
+  border-radius: 8px; /* Slightly larger border radius for a softer look */
   cursor: pointer;
-  transition: background-color 0.3s, transform 0.2s;
-  margin: 5px 10px;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s ease, transform 0.2s ease; /* Added transition for scaling */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
 }
 
-.profile-btn:hover, .quiz-btn:hover, .logout-btn:hover {
-  background-color: #0056b3; /* Darker shade on hover */
-  transform: translateY(-2px);
+button:hover {
+  background: linear-gradient(135deg, #0056b3, #004494); /* Darker gradient on hover */
+  transform: translateY(-2px); /* Lift effect on hover */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); /* Deeper shadow on hover */
 }
 
-/* Align buttons container */
-.button-container {
+button:focus {
+  outline: none; /* Remove default outline */
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.5); /* Add a focus ring for accessibility */
+}
+ 
+
+.profile-btn {
+  margin-top: 40vh;
+	background-color: #28a745;
+}
+h1 {
+  font-family: 'Impact ', sans-serif; /* Professional sans-serif font */
+  font-size: 30cm; /* Size appropriate for a heading */
+  color: #333; /* Dark gray for a professional appearance */
+  text-align: center; /* Center alignment */
+  padding: 1rem; /* Padding for extra space */
+  border-bottom: 2px solid #141415; /* Bottom border for emphasis */
+  line-height: 1.2; /* Improved readability */
+}
+
+
+.profile-btn:hover {
+	background-color: #218838;
+}
+
+.logout-btn {
+  
+	background-color: #dc3545;
+}
+
+.logout-btn:hover {
+	background-color: #c82333;
+}
+
+.main-content {
+  flex: 1;
+  width: 100%;
+  padding: 2rem;
   display: flex;
-  justify-content: center;
-  margin-top: 20px;
+  flex-direction: column;
+  gap: 2rem;
+  max-height: 90vh; /* Set a maximum height to make it scrollable */
+  overflow-y: auto; /* Enable vertical scrolling */
 }
 
-/* Style for each section */
-.stats-section, .activities-section, .tasks-section, .notifications-section, .quick-links-section {
-  width: 80%;
-  max-width: 600px;
-  margin: 20px auto;
-  padding: 20px;
-  background-color: rgba(255, 255, 255, 0.95); /* Slightly more opaque background */
-  border-radius: 10px;
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+/* Hide scrollbar for WebKit browsers (Chrome, Safari, etc.) */
+.main-content::-webkit-scrollbar {
+  width: 0;
+  height: 0;
 }
 
-/* Header styles for sections */
-.stats-section h2, .activities-section h2, .tasks-section h2, .notifications-section h2, .quick-links-section h2 {
-  font-size: 26px; /* Increased header size */
-  color: #333;
-  margin-bottom: 10px;
-  border-bottom: 3px solid #007BFF; /* Thicker border for header */
-  padding-bottom: 5px;
+/* For Firefox */
+.main-content {
+  scrollbar-width: none; /* Disable scrollbar width */
+  -ms-overflow-style: none; /* Disable scrollbar for IE and Edge */
 }
 
-/* General text color for sections */
-.stats-section p, .activities-section p, .tasks-section p, .notifications-section p, .quick-links-section p {
-  color: #080808;
-  margin: 5px 0;
-}
-.stats-section p{
-  margin-right: 20%;
-}
 
-/* Ensure sections are scrollable */
-.dashboard-container {
-  height: 100vh;
-  overflow-y: auto;
-}
-
-/* Mobile responsive styles */
-@media (max-width: 768px) {
-  .button-container {
-    flex-direction: column;
-  }
-
-  .profile-btn, .quiz-btn, .logout-btn {
-    width: 100%;
-    margin: 10px 0;
-  }
-
-  .stats-section, .activities-section, .tasks-section, .notifications-section, .quick-links-section {
-    width: 90%;
-    margin-top: 15px;
-  }
-
-  .navbar {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-}
-
-/* Stats Section and Button */
 .stats-section {
-  display: flex;
-  justify-content: space-between; /* Align items to space between */
-  align-items: center; /* Center align the items vertically */
-  padding: 10px; /* Add some padding */
-  position: relative; /* Make it relative for absolute positioning of the button */
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.3)); /* Gradient background */
+  padding: 2rem; /* Increased padding for more space */
+  border-radius: 12px; /* Slightly increased border radius for softer edges */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); /* Deeper shadow for more depth */
+  border: 2px solid rgba(0, 0, 0, 0.3);
+  text-align: left;
+  transition: transform 0.3s, box-shadow 0.3s; /* Transition for hover effect */
 }
+
+.stats-section:hover {
+  transform: translateY(-5px); /* Lift effect on hover */
+  box-shadow: 0 12px 20px rgba(0, 0, 0, 0.2); /* Deeper shadow on hover */
+}
+
+.stats-section h2 {
+  font-size: 2rem; /* Increased font size for emphasis */
+  margin-bottom: 1rem;
+  color: #444; /* Slightly darker color */
+  font-weight: 700; /* Bold font weight */
+  text-transform: uppercase; /* Uppercase for emphasis */
+}
+
+.insidestats {
+  font-size: 1.2rem; /* Slightly larger font size */
+  color: #666; /* Lighter gray for contrast */
+  line-height: 1.5; /* Increased line height for better readability */
+}
+
+/* Optional: Add an icon next to the h2 heading */
+.stats-section h2::before {
+  content: "📊"; /* Replace with an actual icon if desired */
+  margin-right: 0.5rem; /* Space between icon and text */
+  font-size: 1.5rem; /* Size of the icon */
+}
+
 
 .quiz-comparison-button {
-  width: 70px; /* Set a slightly larger width */
-  height: 70px; /* Set a slightly larger height */
-  background-color: #007BFF; /* Button background color */
-  color: white; /* Arrow color */
-  border: none; /* Remove border */
-  cursor: pointer; /* Pointer cursor on hover */
-  border-radius: 50%; /* Make the button circular */
-  position: absolute; /* Position it absolutely */
-  right: 15px; /* Align to the right with some margin */
-  top: 50%; /* Center vertically */
-  transform: translateY(-50%); /* Adjust for vertical centering */
-  display: flex; /* Use flexbox for centering the icon */
-  justify-content: center; /* Center the icon horizontally */
-  align-items: center; /* Center the icon vertically */
-  transition: background-color 0.3s; /* Smooth background color transition */
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Add shadow for depth */
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0.8rem;
+	background-color: #17a2b8;
+	color: white;
+	font-size: 1.2rem;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+	transition: background-color 0.3s ease;
+	margin-top: 1rem;
 }
 
 .quiz-comparison-button:hover {
-  background-color: #0056b3; /* Darker shade on hover */
+	background-color: #138496;
 }
 
 .arrow-icon {
-  font-size: 28px; /* Increase size of the arrow */
+	margin-left: 0.5rem;
+	font-size: 1.4rem;
+}
+
+.feedback-section {
+	margin-top: 2rem;
+}
+
+.feedback-section button {
+	background-color: #ff9900;
+}
+
+.feedback-section button:hover {
+	background-color: #e68a00;
+}
+
+@media screen and (max-width: 768px) {
+	.dashboard-container {
+		flex-direction: column;
+	}
+
+	.dsidebar {
+		width: 100%;
+		align-items: center;
+	}
+
+	.main-content {
+		padding: 1rem;
+	}
+}
+
+@keyframes bg-scrolling-reverse {
+	100% {
+		background-position: 50px 50px;
+	}
 }

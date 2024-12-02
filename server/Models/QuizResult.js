@@ -18,9 +18,14 @@ const quizResultSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
+  weaknesses: [String], // New field for weaknesses
   questions: [
     {
       question: {
+        type: String,
+        required: true,
+      },
+      topics: {
         type: String,
         required: true,
       },

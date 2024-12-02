@@ -55,7 +55,7 @@ module.exports.getSubjects = async (req, res) => {
 
 // Import necessary modules
 // Function to fetch quiz results grouped by subjects
-module.exports.getQuizResults = async (req, res) => {
+module.exports.getQuizResult = async (req, res) => {
     const token = req.cookies.token; // Extract token from cookies
     if (!token) {
         return res.json({ status: false });
@@ -89,42 +89,42 @@ module.exports.getQuizResults = async (req, res) => {
 };
 
 // Controller function to fetch quiz result by quizId
-module.exports.getQuizResult = async (req, res) => {
-    let quizId;
+// module.exports.getQuizResult = async (req, res) => {
+//     let quizId;
 
-    if (req.method === 'GET') {
-        quizId = req.query.quizId; // Get quizId from the query string in GET request
-    } else if (req.method === 'POST') {
-        quizId = req.body.quizId; // Get quizId from the request body in POST request
-    }
+//     if (req.method === 'GET') {
+//         quizId = req.query.quizId; // Get quizId from the query string in GET request
+//     } else if (req.method === 'POST') {
+//         quizId = req.body.quizId; // Get quizId from the request body in POST request
+//     }
 
-    if (!quizId) {
-        return res.status(400).json({ status: false, message: 'Quiz ID is required.' });
-    }
+//     if (!quizId) {
+//         return res.status(400).json({ status: false, message: 'Quiz ID is required.' });
+//     }
 
-    try {
-        const quizDetail = await QuizResult.findOne({ quizAttemptId: quizId });
+//     try {
+//         const quizDetail = await QuizResult.findOne({ quizAttemptId: quizId });
 
-        if (!quizDetail) {
-            return res.status(404).json({ status: false, message: 'Quiz result not found.' });
-        }
+//         if (!quizDetail) {
+//             return res.status(404).json({ status: false, message: 'Quiz result not found.' });
+//         }
 
-        return res.status(200).json({
-            status: true,
-            quiz: {
-                title: `Quiz on ${quizDetail.subject}`,
-                description: `A quiz consisting of ${quizDetail.totalQuestions} questions.`,
-                subject: quizDetail.subject,
-                totalQuestions: quizDetail.totalQuestions,
-                duration: 30, // Example duration
-                questions: quizDetail.questions
-            }
-        });
-    } catch (err) {
-        console.error('Error fetching quiz details:', err.message); // Improved error logging
-        return res.status(500).json({ status: false, message: 'Server error. Please try again later.' });
-    }
-};
+//         return res.status(200).json({
+//             status: true,
+//             quiz: {
+//                 title: `Quiz on ${quizDetail.subject}`,
+//                 description: `A quiz consisting of ${quizDetail.totalQuestions} questions.`,
+//                 subject: quizDetail.subject,
+//                 totalQuestions: quizDetail.totalQuestions,
+//                 duration: 30, // Example duration
+//                 questions: quizDetail.questions
+//             }
+//         });
+//     } catch (err) {
+//         console.error('Error fetching quiz details:', err.message); // Improved error logging
+//         return res.status(500).json({ status: false, message: 'Server error. Please try again later.' });
+//     }
+// };
 
 // Define the route to get a specific quiz result using query parameters
 
@@ -136,16 +136,39 @@ module.exports.getQuestionsBySubject = async (req, res) => {
   }
 
   try {
-    // Fetch questions from the database based on the subject
-    const questions = await Question.find({ subject });
+    // Fetch distinct topics for the subject
+    const topics = await Question.distinct('topic', { subject });
 
-    if (questions.length === 0) {
+    if (topics.length === 0) {
+      return res.status(404).json({ status: false, message: 'No topics found for this subject.' });
+    }
+
+    // Initialize an array to hold questions for all topics
+    const questionsByTopic = [];
+
+    // Loop over each topic and fetch 5 random questions for that topic
+    for (let topic of topics) {
+      const questions = await Question.find({ subject, topic })
+        .sort({ $natural: -1 }) // Sort documents in natural order (random-like effect)
+        .limit(5);
+
+      // Push the questions with the topic to the questionsByTopic array
+      if (questions.length > 0) {
+        questionsByTopic.push({
+          topic,
+          questions
+        });
+      }
+    }
+
+    if (questionsByTopic.length === 0) {
       return res.status(404).json({ status: false, message: 'No questions found for this subject.' });
     }
 
     return res.status(200).json({
       status: true,
-      questions: questions // Send back the questions array
+      topics, // Send back the list of topics
+      questionsByTopic // Send back the grouped questions by topic
     });
   } catch (error) {
     console.error('Error fetching questions:', error);
@@ -179,3 +202,61 @@ module.exports.storeFeedback = async (req, res) => {
     return res.status(500).json({ status: false, message: 'Server error. Please try again later.' });
   }
 };
+module.exports.newQuizresultsave = async (req, res) => {
+  const token = req.cookies.token; // Extract token from cookies
+  if (!token) {
+      return res.status(403).json({ status: false, message: "No token found" });
+  }
+
+  jwt.verify(token, process.env.TOKEN_KEY, async (err, decoded) => {
+      if (err) {
+          return res.status(403).json({ status: false, message: "Invalid or expired token" });
+      }
+
+      const { subject } = req.query; // Get the subject from the query
+      const userId = decoded.id; // Get user ID from the decoded token
+
+      try {
+          // Fetch the latest quiz result for the user
+          const latestQuizResult = await QuizResult.findOne({ userId, subject })
+              .sort({ createdAt: -1 }) // Sort to get the latest one
+              .populate('userId', 'name email'); // Populate user info if needed
+
+          if (!latestQuizResult) {
+              return res.status(404).json({ status: false, message: 'No quiz results found.' });
+          }
+
+          res.json({
+              status: true,
+              latestQuiz: latestQuizResult,
+              previousQuiz: [] // Include any previous quiz results if needed
+          });
+      } catch (error) {
+          console.error("Error fetching quiz results", error);
+          res.status(500).json({ status: false, message: 'Internal server error' });
+      }
+  });
+};
+const StudyMaterial = require('../Models/StudyMaterialModel');
+
+module.exports.getMaterialByTopic = async (req, res) => {
+  const { topic } = req.query; // Get topic from query parameters
+
+  if (!topic) {
+    return res.status(400).json({ status: false, message: 'Topic is required.' });
+  }
+
+  try {
+    const material = await StudyMaterial.findOne({ topic });
+    
+    if (!material) {
+      return res.status(404).json({ status: false, message: 'No material found for this topic.' });
+    }
+
+    return res.status(200).json({ status: true, material });
+  } catch (error) {
+    console.error('Error fetching material:', error);
+    return res.status(500).json({ status: false, message: 'Server error.' });
+  }
+};
+
